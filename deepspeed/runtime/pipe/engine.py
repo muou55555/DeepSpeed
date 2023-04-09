@@ -967,7 +967,7 @@ class PipelineEngine(DeepSpeedEngine):
         # a grad that needs to be communicated. We free the buffer immediately
         # after, so no need to restore it. The receiver also has a hack that skips
         # the recv. This is because NCCL does not let us send torch.BoolTensor :-(.
-        if self.has_attention_mask or self.has_bool_tensors:
+        if len(inputs) > 2 and (self.has_attention_mask or self.has_bool_tensors):
             inputs = list(inputs)
             inputs.pop()
             inputs = tuple(inputs)
@@ -1086,7 +1086,7 @@ class PipelineEngine(DeepSpeedEngine):
         if isinstance(self.grad_layer, torch.Tensor):
             p2p.recv(self.grad_layer, self.next_stage)
         else:
-            assert isinstance(outputs, tuple)
+            assert isinstance(outputs, (tuple, list))
             for idx, buffer in enumerate(self.grad_layer):
                 # XXX GPT-2 hack
                 if self.is_grad_partitioned and idx == 0 and buffer.dtype != torch.long:
