@@ -2568,7 +2568,7 @@ class DeepSpeedEngine(Module):
                                                          load_module_only=load_module_only,
                                                          custom_load_fn=custom_load_fn)
 
-        load_zero_checkpoint = self.zero_optimization() or self.bfloat16_enabled()
+        load_zero_checkpoint = load_optimizer_states and (self.zero_optimization() or self.bfloat16_enabled())
         if load_zero_checkpoint and load_path is not None:
             success = self._load_zero_checkpoint(load_dir, tag, load_optimizer_states=load_optimizer_states)
             if not success:
