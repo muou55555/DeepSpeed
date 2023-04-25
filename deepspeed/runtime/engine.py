@@ -2508,6 +2508,7 @@ class DeepSpeedEngine(Module):
         ckpt_files.sort()
         return ckpt_files
 
+    # add by muou
     def load_checkpoint(self,
                         load_dir,
                         tag=None,
@@ -2515,7 +2516,8 @@ class DeepSpeedEngine(Module):
                         load_optimizer_states=True,
                         load_lr_scheduler_states=True,
                         load_module_only=False,
-                        custom_load_fn=None):
+                        custom_load_fn=None,
+                        is_init_ckpt=True):
         """
         Load training checkpoint
 
@@ -2570,7 +2572,10 @@ class DeepSpeedEngine(Module):
 
         load_zero_checkpoint = load_optimizer_states and (self.zero_optimization() or self.bfloat16_enabled())
         if load_zero_checkpoint and load_path is not None:
-            success = self._load_zero_checkpoint(load_dir, tag, load_optimizer_states=load_optimizer_states)
+            # add by muou
+            success = False
+            if is_init_ckpt == False: # when resume ckpt
+                success = self._load_zero_checkpoint(load_dir, tag, load_optimizer_states=load_optimizer_states)
             if not success:
                 self.optimizer._restore_from_bit16_weights()
 
