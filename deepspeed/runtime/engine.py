@@ -2517,7 +2517,7 @@ class DeepSpeedEngine(Module):
                         load_lr_scheduler_states=True,
                         load_module_only=False,
                         custom_load_fn=None,
-                        is_init_ckpt=True):
+                        is_init_ckpt=False):
         """
         Load training checkpoint
 
